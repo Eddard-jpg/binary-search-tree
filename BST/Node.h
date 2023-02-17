@@ -7,7 +7,6 @@
 
 #include <bits/stdc++.h>
 
-#include <memory>
 using namespace std;
 
 class Node {
@@ -35,37 +34,6 @@ public:
         rightChild = make_unique<Node>(value_);
         rightChild->parent = this;
         rightChild->myPtr = &rightChild;
-    }
-    
-    [[nodiscard]] unique_ptr<Node> *getPtr() const {
-        return myPtr;
-    }
-    
-    void swapParent() {
-        if (parent == nullptr) return;
-        
-        int f = value < parent->value;
-        
-        Node *node0 = parent->parent;
-        Node *node1 = parent;
-        Node *node2 = this;
-        Node *node3 = f ? rightChild.get() : leftChild.get();
-        
-        unique_ptr<Node> *ptr1 = parent->myPtr;
-        unique_ptr<Node> *ptr2 = myPtr;
-        unique_ptr<Node> *ptr3 = f ? &rightChild : &leftChild;
-        
-        ptr1->swap(*ptr2);
-        ptr2->swap(*ptr3);
-        
-        node1->parent = node2;
-        node2->parent = node0;
-        if (node3) node3->parent = node1;
-        
-        node1->myPtr = ptr3;
-        node2->myPtr = ptr1;
-        if (node3) node3->myPtr = ptr2;
-        
     }
     
     ~Node() {
