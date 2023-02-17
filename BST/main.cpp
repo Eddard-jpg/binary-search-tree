@@ -1,18 +1,19 @@
 #include <bits/stdc++.h>
 #include "BST.h"
+#include "BST.cpp"
+#include "Node.cpp"
 
 using namespace std;
 
 int main() {
     
-    BST bst;
+    BST<int> bst;
     
     int n, q;
     cin >> n >> q;
     
     for (int i = 0; i < n; ++i) {
-        int x;
-        cin >> x;
+        int x = i + 1;
         
         bst.add(x);
     }
