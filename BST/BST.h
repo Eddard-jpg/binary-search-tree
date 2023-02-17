@@ -44,7 +44,7 @@ protected:
         
         getPtrs(v, u->leftChild.get());
         
-        v.push_back(std::move(*u->getPtr()));
+        v.push_back(std::move(*u->myPtr));
         
         getPtrs(v, u->rightChild.get());
     }
