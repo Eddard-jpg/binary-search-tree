@@ -16,55 +16,45 @@ protected:
     
     unique_ptr<Node> root = nullptr;
     
-    bool find(int x, Node *u) {
+    bool find(int x, Node *u) const {
         if (u == nullptr) return false;
         if (u->value == x) return true;
-        if (u->value < x) return find(x, u->rightChild.get());
-        return find(x, u->leftChild.get());
+        return find(x, u->child[u->value < x].get());
     }
     
     void traverse(vector<Node *> &v, Node *u, int mode) const {
         if (u == nullptr) return;
         
         if (mode == 0) v.push_back(u);
-        
-        traverse(v, u->leftChild.get(), mode);
-        
+        traverse(v, u->child[0].get(), mode);
         if (mode == 1) v.push_back(u);
-        
-        traverse(v, u->rightChild.get(), mode);
-        
+        traverse(v, u->child[1].get(), mode);
         if (mode == 2) v.push_back(u);
     }
     
-    void getPtrs(vector<unique_ptr<Node>> &v, Node *u) {
+    void getPtrs(vector<Node*> &v, Node *u) {
         if (u == nullptr) return;
         
-        getPtrs(v, u->leftChild.get());
-        
-        v.push_back(std::move(*u->myPtr));
-        
-        getPtrs(v, u->rightChild.get());
+        getPtrs(v, u->child[0].get());
+        v.push_back(u->myPtr->release());
+        getPtrs(v, u->child[1].get());
     }
     
-    void balance(vector<unique_ptr<Node>> &sorted, unique_ptr<Node> &myPtr, Node *parent, int l, int r) {
+    void balance(vector<Node*> &sorted, Node *parent, unique_ptr<Node> &myPtr, int l, int r) {
         if (r - l == 0) return;
         
         int mid = (l + r) / 2;
-        myPtr = std::move(sorted[mid]);
-        myPtr->parent = parent;
-        myPtr->myPtr = &myPtr;
+        sorted[mid]->attach_to(parent, myPtr);
         
-        balance(sorted, myPtr->leftChild, myPtr.get(), l, mid);
-        balance(sorted, myPtr->rightChild, myPtr.get(), mid + 1, r);
+        balance(sorted, myPtr.get(), myPtr->child[0], l, mid);
+        balance(sorted, myPtr.get(), myPtr->child[1], mid + 1, r);
     }
 
 public:
     
     void add(int value) {
         if (root == nullptr) {
-            root = make_unique<Node>(value);
-            root->myPtr = &root;
+            root = make_unique<Node>(value, nullptr, root);
             return;
         }
         
@@ -73,20 +63,16 @@ public:
         while (current != nullptr) {
             if (value == current->value) return;
             parent = current;
-            if (value > current->value) current = current->rightChild.get();
-            else current = current->leftChild.get();
+            current = current->child[value > current->value].get();
         }
-        
-        if (value > parent->value) parent->addRight(value);
-        else parent->addLeft(value);
-        
+    
+        parent->add_child(value, value > parent->value);
     }
     
-    bool find(int x) { return find(x, root.get()); }
+    [[nodiscard]] bool find(int x) const { return find(x, root.get()); }
     
     // Print all values of the BST, mode = 0 for pre-order traversal, 1 for in-order (default), or 2 for post-order.
-    void print(int mode = 1) {
-        
+    void print(int mode = 1) const {
         if (mode < 0 || mode > 2) throw invalid_argument("print mode must belong to {0, 1, 2}");
         
         vector<Node *> ptrs;
@@ -94,14 +80,13 @@ public:
         
         for (auto ptr: ptrs) cout << *ptr << " ";
         cout << endl;
-        
     }
     
     // Balance the BST manually.
     void balance() {
-        vector<unique_ptr<Node>> sorted;
+        vector<Node*> sorted;
         getPtrs(sorted, root.get());
-        balance(sorted, root, nullptr, 0, (int) sorted.size());
+        balance(sorted, nullptr, root, 0, (int) sorted.size());
     }
     
     ~BST() {
