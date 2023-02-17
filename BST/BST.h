@@ -6,8 +6,6 @@
 #define DATASTRUCTURES_BST_H
 
 #include <bits/stdc++.h>
-
-#include <memory>
 #include "Node.h"
 
 using namespace std;
