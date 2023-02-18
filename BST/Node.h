@@ -15,36 +15,34 @@ public:
     Node *parent = nullptr;
     unique_ptr<Node> child[2];
     
-    
     bool operator<(const Node &other) const;
     
     bool operator==(const Node &other) const;
     
     bool operator>(const Node &other) const;
     
-    explicit Node(T value_);
+    explicit Node(T value_, Node *parent_ = nullptr);
     
-    Node(T value_, Node *parent_, unique_ptr<Node> &myPtr_);
+    virtual Node<T> *add_child(T value_, int direction);
     
-    // Add child node, direction = 0 for left, 1 for right.
-    void add_child(T value_, int direction);
+    virtual void attach_child(Node *node, int direction);
     
-    // Attach an existing node as a child, direction = 0 for left, 1 for right.
-    void attach_child(Node *node, int direction);
+    virtual void attach_to(Node *parent_);
     
-    void attach_to(Node *parent_, unique_ptr<Node<T>> *root);
+    virtual unique_ptr<Node> *get_ptr();
     
-    unique_ptr<Node> *get_ptr(unique_ptr<Node> *root);
+    virtual void rotate(int direction, unique_ptr<Node<T>> *root);
     
     ~Node();
     
-};
-
-template<typename T>
-ostream &operator<<(ostream &COUT, Node<T> &u) {
-    COUT << u.value;
-    return COUT;
+    virtual int get_height() { return 0; }
     
-}
+    virtual int balance_factor() { return 0; }
+    
+    virtual void update_height() {}
+    
+    virtual void rebalance(unique_ptr<Node<T>> *root) {}
+    
+};
 
 #endif //DATASTRUCTURES_NODE_H
