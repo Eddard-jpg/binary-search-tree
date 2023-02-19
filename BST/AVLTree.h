@@ -14,8 +14,6 @@ public:
     
     Node<T> *insert(T value);
     
-    Node<T> *erase(T value);
-    
     void balance();
     
     ~AVLTree();
