@@ -17,10 +17,6 @@ public:
     // Add child node, direction = 0 for left, 1 for right.
     Node<T> *add_child(T value_, int direction);
     
-    void attach_child(Node<T> *node, int direction);
-    
-    void attach_to(Node<T> *parent_);
-    
     int get_height();
     
     int balance_factor();
