@@ -15,6 +15,10 @@ public:
     
     [[nodiscard]] Node<T> *find(T x) const;
     
+    Node<T> *lower_bound(T value) const;
+    
+    Node<T> *upper_bound(T value) const;
+    
     virtual Node<T> *insert(T value);
     
     virtual Node<T> *erase(T value);
@@ -34,6 +38,10 @@ protected:
     unique_ptr<Node<T>> root = nullptr;
     
     Node<T> *find(T value, Node<T> *u) const;
+    
+    Node<T> *lower_bound(T value, Node<T> *u) const;
+    
+    Node<T> *upper_bound(T value, Node<T> *u) const;
     
     virtual Node<T> *erase(Node<T> *u);
     

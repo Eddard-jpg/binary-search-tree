@@ -7,9 +7,23 @@
 template<typename T>
 bool Node<T>::operator<(const Node &other) const { return value < other.value; }
 template<typename T>
+bool Node<T>::operator<=(const Node &other) const { return value <= other.value; }
+template<typename T>
 bool Node<T>::operator==(const Node &other) const { return value == other.value; }
 template<typename T>
+bool Node<T>::operator>=(const Node &other) const { return value >= other.value; }
+template<typename T>
 bool Node<T>::operator>(const Node &other) const { return value > other.value; }
+template<typename T>
+bool Node<T>::operator<(const int &other) const { return value < other; }
+template<typename T>
+bool Node<T>::operator<=(const int &other) const { return value <= other; }
+template<typename T>
+bool Node<T>::operator==(const int &other) const { return value == other; }
+template<typename T>
+bool Node<T>::operator>=(const int &other) const { return value >= other; }
+template<typename T>
+bool Node<T>::operator>(const int &other) const { return value > other; }
 
 template<typename T>
 Node<T>::Node(T value_, Node *parent_) : value(value_), parent(parent_) {}

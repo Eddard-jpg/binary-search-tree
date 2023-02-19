@@ -17,9 +17,23 @@ public:
     
     bool operator<(const Node &other) const;
     
+    bool operator<=(const Node &other) const;
+    
     bool operator==(const Node &other) const;
     
+    bool operator>=(const Node &other) const;
+    
     bool operator>(const Node &other) const;
+    
+    bool operator<(const int &other) const;
+    
+    bool operator<=(const int &other) const;
+    
+    bool operator==(const int &other) const;
+    
+    bool operator>=(const int &other) const;
+    
+    bool operator>(const int &other) const;
     
     explicit Node(T value_, Node *parent_ = nullptr);
     
