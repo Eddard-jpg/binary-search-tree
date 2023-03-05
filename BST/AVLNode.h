@@ -12,22 +12,21 @@ class AVLNode : public Node<T> {
 public:
     int height;
     
+    AVLNode() = default;
+    
     explicit AVLNode(T value_, Node<T> *parent_ = nullptr);
     
-    // Add child node, direction = 0 for left, 1 for right.
     Node<T> *add_child(T value_, int direction);
     
-    int get_height();
+    int get_height() const;
     
     int balance_factor();
     
     void update_height();
     
-    void rotate(int direction, unique_ptr<Node<T>> *root);
+    void insert_rebalance(unique_ptr<Node<T>> *root);
     
-    void rebalance(unique_ptr<Node<T>> *root);
-    
-    ~AVLNode();
+    void erase_rebalance(unique_ptr<Node<T>> *root);
     
 };
 

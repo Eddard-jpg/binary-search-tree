@@ -5,6 +5,16 @@
 #include "BST.h"
 
 template<typename T>
+int BST<T>::size() const {
+    return size_;
+}
+
+template<typename T>
+bool BST<T>::empty() const {
+    return !size_;
+}
+
+template<typename T>
 [[nodiscard]] Node<T> *BST<T>::find(const T x) const { return find(x, root.get()); }
 
 template<typename T>
@@ -17,6 +27,7 @@ template<typename T>
 Node<T> *BST<T>::insert(T value) {
     if (root == nullptr) {
         root = make_unique<Node<T>>(value, nullptr);
+        size_++;
         return root.get();
     }
     
@@ -27,21 +38,32 @@ Node<T> *BST<T>::insert(T value) {
         parent = current;
         current = current->child[value > current->value].get();
     }
-    
+    size_++;
     return parent->add_child(value, value > parent->value);
 }
 
 template<typename T>
 Node<T> *BST<T>::erase(T value) {
     Node<T> *u = find(value);
-    if (u == nullptr)
-        throw invalid_argument("Value doesn't exist.");
+    
+    if (u == nullptr) return u;
+    
+    if (u->child[0] && u->child[1]) {
+        Node<T> *v = u->child[1].get();
+        while (v->child[0]) v = v->child[0].get();
+        swap(u->value, v->value);
+        u = v;
+    }
+    
     return erase(u);
 }
 
 template<typename T>
+void BST<T>::clear() { root.reset(), size_ = 0; }
+
+template<typename T>
 void BST<T>::print(int mode) const {
-    if (mode < 0 || mode > 2) throw invalid_argument("print mode must belong to {0, 1, 2}");
+    if (mode < 1 || mode > 3) mode = 2;
     
     vector<Node<T> *> ptrs;
     traverse(ptrs, root.get(), mode);
@@ -87,23 +109,9 @@ template<typename T>
 
 template<typename T>
 Node<T> *BST<T>::erase(Node<T> *u) {
+    size_--;
     
-    unique_ptr<Node<T>> *ptr;
-    
-    if (u->child[0] && u->child[1]) {
-        Node<T> *v = u->child[1].get();
-        while (v->child[0]) v = v->child[0].get();
-        swap(u->value, v->value);
-        
-        if (u == v->parent)
-            ptr = &u->child[1];
-        else
-            ptr = &v->parent->child[0];
-        
-        u = v;
-    } else
-        ptr = u->get_ptr();
-    
+    unique_ptr<Node<T>> *ptr = u->get_ptr();
     if (!ptr) ptr = &root;
     
     if (!u->child[0] && !u->child[1]) {
@@ -113,14 +121,13 @@ Node<T> *BST<T>::erase(Node<T> *u) {
     }
     
     for (int i = 0; i < 2; ++i) {
-        if (!u->child[i]) {
-            u->child[!i]->parent = u->parent;
-            *ptr = std::move(u->child[!i]);
+        if (u->child[i]) {
+            u->child[i]->parent = u->parent;
+            *ptr = std::move(u->child[i]);
             return ptr->get();
         }
     }
     
-    assert(0);
     return nullptr;
     
 }
@@ -129,11 +136,11 @@ template<typename T>
 void BST<T>::traverse(vector<Node<T> *> &v, Node<T> *u, int mode) const {
     if (u == nullptr) return;
     
-    if (mode == 0) v.push_back(u);
-    traverse(v, u->child[0].get(), mode);
     if (mode == 1) v.push_back(u);
-    traverse(v, u->child[1].get(), mode);
+    traverse(v, u->child[0].get(), mode);
     if (mode == 2) v.push_back(u);
+    traverse(v, u->child[1].get(), mode);
+    if (mode == 3) v.push_back(u);
 }
 
 template<typename T>
@@ -168,3 +175,8 @@ unique_ptr<Node<T>> *BST<T>::get_root() {
     return &root;
 }
 
+template<typename T>
+int BST<T>::height() const {
+    if (root == nullptr) return -1;
+    return root->get_height();
+}

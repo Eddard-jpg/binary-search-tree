@@ -14,16 +14,17 @@ template<typename T>
 bool Node<T>::operator>=(const Node &other) const { return value >= other.value; }
 template<typename T>
 bool Node<T>::operator>(const Node &other) const { return value > other.value; }
+
 template<typename T>
-bool Node<T>::operator<(const int &other) const { return value < other; }
+bool Node<T>::operator<(const T &other) const { return value < other; }
 template<typename T>
-bool Node<T>::operator<=(const int &other) const { return value <= other; }
+bool Node<T>::operator<=(const T &other) const { return value <= other; }
 template<typename T>
-bool Node<T>::operator==(const int &other) const { return value == other; }
+bool Node<T>::operator==(const T &other) const { return value == other; }
 template<typename T>
-bool Node<T>::operator>=(const int &other) const { return value >= other; }
+bool Node<T>::operator>=(const T &other) const { return value >= other; }
 template<typename T>
-bool Node<T>::operator>(const int &other) const { return value > other; }
+bool Node<T>::operator>(const T &other) const { return value > other; }
 
 template<typename T>
 Node<T>::Node(T value_, Node *parent_) : value(value_), parent(parent_) {}
@@ -31,7 +32,6 @@ Node<T>::Node(T value_, Node *parent_) : value(value_), parent(parent_) {}
 template<typename T>
 Node<T> *Node<T>::add_child(T value_, int direction) {
     child[direction] = make_unique<Node<T>>(value_, this);
-    child[direction]->parent = this;
     return child[direction].get();
 }
 
@@ -47,7 +47,13 @@ void Node<T>::attach_to(Node *parent_) { parent_->attach_child(this, *this > *pa
 template<typename T>
 unique_ptr<Node<T>> *Node<T>::get_ptr() {
     if (parent == nullptr) return nullptr;
-    return &parent->child[*this > *parent];
+    return &parent->child[get_direction()];
+}
+
+template<typename T>
+int Node<T>::get_direction() {
+    if (parent == nullptr) return -1;
+    return parent->child[1].get() == this;
 }
 
 template<typename T>
@@ -72,8 +78,15 @@ void Node<T>::rotate(int direction, unique_ptr<Node<T>> *root) {
 }
 
 template<typename T>
-Node<T>::~Node() {
-    cout << "~" << value << " ";
+Node<T>::~Node() {}
+
+template<typename T>
+int Node<T>::get_height() const {
+    int height = 0;
+    for (auto &c: child)
+        if (c)
+            height = max(height, c->get_height() + 1);
+    return height;
 }
 
 template<typename T>

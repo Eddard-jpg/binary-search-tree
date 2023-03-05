@@ -11,7 +11,14 @@ using namespace std;
 
 template<typename T>
 class BST {
+
 public:
+    
+    [[nodiscard]] int size() const;
+    
+    [[nodiscard]] int height() const;
+    
+    [[nodiscard]] bool empty() const;
     
     [[nodiscard]] Node<T> *find(T x) const;
     
@@ -21,7 +28,9 @@ public:
     
     virtual Node<T> *insert(T value);
     
-    virtual Node<T> *erase(T value);
+    Node<T> *erase(T value);
+    
+    void clear();
     
     // Print all values of the BST, mode = 0 for pre-order traversal, 1 for in-order (default), or 2 for post-order.
     void print(int mode = 1) const;
@@ -35,6 +44,7 @@ public:
 
 protected:
     
+    int size_ = 0;
     unique_ptr<Node<T>> root = nullptr;
     
     Node<T> *find(T value, Node<T> *u) const;

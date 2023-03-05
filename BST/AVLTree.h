@@ -15,8 +15,6 @@ public:
     Node<T> *insert(T value);
     
     void balance();
-    
-    ~AVLTree();
 
 protected:
     
